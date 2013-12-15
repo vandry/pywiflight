@@ -1,0 +1,4 @@
+*.pyc
+/wiflight_client.egg-info
+/build
+/dist
