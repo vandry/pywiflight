@@ -134,6 +134,25 @@ class MockClient(object):
                     </aircraft>
                 </flight>
             """),
+            'a/reservation/resv1': (0, "text/xml",
+                """<?xml version="1.0" encoding="UTF-8"?>
+                <reservation domain="dom1" name="resv1">
+                    <aircraft id="5">
+                        <tail>C-FFSK</tail>
+                        <model>Cessna 172N</model>
+                        <cockpit_height>1.5</cockpit_height>
+                        <prop_blades>2</prop_blades>
+                        <model_url>http://www.wi-flight.net/Cessna_172.kmz</model_url>
+                    </aircraft>
+                    <start>20131201T120000Z</start>
+                    <end>20131201T130000Z</end>
+                    <notify_profile>placeholder</notify_profile>
+                    <crew>
+                        <user name="crew1"/>
+                        <user name="crew2"/>
+                    </crew>
+                </reservation>
+            """),
         }
 
     def request(self, url, method, data=None, content_type="text/xml", etag=AnyEtag):
