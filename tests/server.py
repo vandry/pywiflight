@@ -7,6 +7,10 @@ AnyEtag = object()
 class MockClient(object):
     def __init__(self):
         self.contents = {
+            'test/foo2': (0, "text/plain", "xxx"),
+            'test/foo4': (0, "text/plain", "ccc"),
+            'test/foo5': (0, "text/plain", "ddd"),
+            'test/foo6': (0, "text/plain", "fff"),
             'a/aircraft/5/': (0, "text/xml",
                 """<?xml version="1.0" encoding="UTF-8"?>
                 <aircraft id="5">

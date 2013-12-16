@@ -90,12 +90,35 @@ class APIObject(object):
             content_type=content_type, etag=self.etag
         )
 
+    def save_noguard(self, client):
+        """Same as save, but without a guard.
+
+        The object will be saved to the server no matter what version
+        the server has.
+        """
+        content_type = self.content_type
+        if content_type == 'text/xml':
+            body = lxml.etree.tostring(
+                self.body, pretty_print=False, xml_declaration=True
+            )
+        else:
+            body = self.body
+        client.request(self.url, "PUT", body, content_type=content_type)
+
     def delete(self, client):
         """Delete the object from the server.
 
         A guard is used. See save for details.
         """
         client.request(self.url, "DELETE", etag=self.etag)
+
+    def delete_noguard(self, client):
+        """Same as delete, but without a guard.
+
+        The object will be deleted from the server no matter what
+        version the server has.
+        """
+        client.request(self.url, "DELETE")
 
     @property
     def groups(self):
