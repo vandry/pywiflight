@@ -168,5 +168,5 @@ class APIAircraftImage(APIObject):
     def __init__(self, api_aircraft):
         """Produce aircraft image given aircraft instance"""
         if not isinstance(api_aircraft, APIAircraft):
-            raise ValueError("APIAircraftImage only works on APIAircraft")
+            raise TypeError("APIAircraftImage only works on APIAircraft")
         APIObject.__init__(self, api_aircraft.url + "/image")
