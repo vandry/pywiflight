@@ -23,7 +23,7 @@ class APIAircraft(APIObject):
         if isinstance(aircraft_id, basestring):
             APIObject.__init__(self, "a/aircraft/tail/%s" % (aircraft_id,))
         else:
-            APIObject.__init__(self, "a/aircraft/%d/" % (aircraft_id,))
+            APIObject.__init__(self, "a/aircraft/%d" % (aircraft_id,))
             self.body.set('id', str(aircraft_id))
 
     @classmethod
@@ -50,6 +50,11 @@ class APIAircraft(APIObject):
                 return None
         o.body = deepcopy(xml)
         return o
+
+    @property
+    def image(self):
+        """Image (PNG, JPEG, etc...) for this aircraft"""
+        return APIAircraftImage(self)
 
 for k, v in {
     'tail': "Tail number (identification) of aircraft",
@@ -145,3 +150,23 @@ class APIAircraftSearch(APIListObject):
             APIObject.__init__(self, "a/aircraft/?" + urllib.urlencode({
                 'search': query
             }))
+
+class APIAircraftImage(APIObject):
+    """Wi-Flight aircraft image.
+
+    The Content-Type and image data can be get and set through
+    the content_type and body properties, respectively.
+
+    Instances of APIAircraftImage should be obtained through
+    APIAircraft as follows:
+
+    ac = wiflight.APIAircraft("C-XYZW")
+    image = ac.image
+    """
+    __slots__ = ()
+
+    def __init__(self, api_aircraft):
+        """Produce aircraft image given aircraft instance"""
+        if not isinstance(api_aircraft, APIAircraft):
+            raise ValueError("APIAircraftImage only works on APIAircraft")
+        APIObject.__init__(self, api_aircraft.url + "/image")

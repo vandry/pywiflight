@@ -11,7 +11,7 @@ class MockClient(object):
             'test/foo4': (0, "text/plain", "ccc"),
             'test/foo5': (0, "text/plain", "ddd"),
             'test/foo6': (0, "text/plain", "fff"),
-            'a/aircraft/5/': (0, "text/xml",
+            'a/aircraft/5': (0, "text/xml",
                 """<?xml version="1.0" encoding="UTF-8"?>
                 <aircraft id="5">
                     <tail>C-FFSK</tail>
@@ -21,13 +21,13 @@ class MockClient(object):
                     <model_url>http://www.wi-flight.net/Cessna_172.kmz</model_url>
                 </aircraft>
             """),
-            'a/aircraft/62/': (0, "text/xml",
+            'a/aircraft/62': (0, "text/xml",
                 """<?xml version="1.0" encoding="UTF-8"?>
                 <aircraft id="62">
                     <tail>C-XXXX</tail>
                 </aircraft>
             """),
-            'a/aircraft/63/': (0, "text/xml",
+            'a/aircraft/63': (0, "text/xml",
                 """<?xml version="1.0" encoding="UTF-8"?>
                 <aircraft id="63">
                     <tail>C-YYYY</tail>
@@ -183,6 +183,10 @@ class MockClient(object):
                     </flight>
                 </list>
             """),
+            'a/aircraft/65/image': (0, "image/png",
+                # 1x1 white
+                '\x89PNG\r\n\x1a\n\0\0\0\rIHDR\0\0\0\1\0\0\0\1\1\0\0\0\x007n\xf9$\0\0\0\nIDAT\x08\x99ch\0\0\0\x82\0\x81\xcb\x13\xb2a\0\0\0\0IEND\xaeB`\x82'
+            ),
         }
 
     def request(self, url, method, data=None, content_type="text/xml", etag=AnyEtag):

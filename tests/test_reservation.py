@@ -34,9 +34,9 @@ class WiFlightAPIReservationTestCase(unittest.TestCase):
     def test_reservation_aircraft(self):
         resv = wiflight.APIReservation('resv1')
         resv.load(self.client)
-        self.assertEqual(resv.aircraft.url, 'a/aircraft/5/')
+        self.assertEqual(resv.aircraft.url, 'a/aircraft/5')
         resv.aircraft = wiflight.APIAircraft(6)
-        self.assertEqual(resv.aircraft.url, 'a/aircraft/6/')
+        self.assertEqual(resv.aircraft.url, 'a/aircraft/6')
 
 if __name__ == '__main__':
     unittest.main()

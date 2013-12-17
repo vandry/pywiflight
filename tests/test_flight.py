@@ -42,10 +42,10 @@ class WiFlightAPIFlightTestCase(unittest.TestCase):
     def test_flight_aircraft(self):
         flight = wiflight.APIFlight(3189)
         flight.load(self.client)
-        self.assertEqual(flight.aircraft.url, 'a/aircraft/5/')
+        self.assertEqual(flight.aircraft.url, 'a/aircraft/5')
         self.assertEqual(flight.aircraft.model, 'Cessna 172N')
         flight.aircraft = wiflight.APIAircraft(6)
-        self.assertEqual(flight.aircraft.url, 'a/aircraft/6/')
+        self.assertEqual(flight.aircraft.url, 'a/aircraft/6')
         del flight.aircraft
         self.assertIsNone(flight.aircraft)
 
