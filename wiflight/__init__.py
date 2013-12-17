@@ -5,3 +5,4 @@ from wiflight.object import APIObject
 from wiflight.flight import APIFlight, APIFlightSearch
 from wiflight.aircraft import APIAircraft, APIAircraftSearch
 from wiflight.reservation import APIReservation
+from wiflight.crewdb import APICrewDbEntry, APICrewDbSearch, APICrewDbAnyFleet

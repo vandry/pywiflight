@@ -204,6 +204,47 @@ class MockClient(object):
                     />
                 </flight>
             """),
+            'a/crewdb/user@example.com/fleet1': (0, "text/xml",
+                """<?xml version="1.0" encoding="UTF-8"?>
+                <user>
+                    <username>user@example.com</username>
+                    <email>user@example.com</email>
+                    <name>Kim Vandry</name>
+                    <phone>+1 514 907-0802</phone>
+                    <dbdomain>fleet1-domain.example.com</dbdomain>
+                    <fleet>fleet1</fleet>
+                    <signup_done/>
+                </user>
+            """),
+            'a/crewdb?q=example': (0, "text/xml",
+                """<?xml version="1.0" encoding="UTF-8"?>
+                <crewdb_search>
+                    <user>
+                        <username>user@example.com</username>
+                        <email>user@example.com</email>
+                        <name>Kim Vandry</name>
+                        <phone>+1 514 907-0802</phone>
+                        <dbdomain>fleet1-domain.example.com</dbdomain>
+                        <fleet>fleet1</fleet>
+                        <signup_done/>
+                    </user>
+                    <fleet dbdomain="fleet1-domain.example.com" name="fleet1"/>
+                </crewdb_search>
+            """),
+            'a/crewdb/user@example.com': (0, "text/xml",
+                """<?xml version="1.0" encoding="UTF-8"?>
+                <list>
+                    <user>
+                        <username>user@example.com</username>
+                        <email>user@example.com</email>
+                        <name>Kim Vandry</name>
+                        <phone>+1 514 907-0802</phone>
+                        <dbdomain>fleet1-domain.example.com</dbdomain>
+                        <fleet>fleet1</fleet>
+                        <signup_done/>
+                    </user>
+                </list>
+            """),
         }
 
     def request(self, url, method, data=None, content_type="text/xml", etag=AnyEtag):
