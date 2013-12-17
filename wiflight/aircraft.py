@@ -64,6 +64,7 @@ for k, v in {
 APIAircraft._add_simple_bool_property(
     'pressurized', 'Flags indicating if aircraft is pressurized'
 )
+del k, v
 
 class WithAircraftMixIn(object):
     """For objects that have an attached aircraft"""

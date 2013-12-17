@@ -78,3 +78,4 @@ for k, v in {
 }.iteritems():
     APIFlight._add_simple_float_property(k, v)
 APIFlight._add_simple_text_property('headline', 'Short text string that describes the flight')
+del k, v
