@@ -141,5 +141,33 @@ class WiFlightAPIFlightSearchTestCase(unittest.TestCase):
         self.assertEqual(len(s), 2)
         self.assertEqual(iter(s).next().headline, "1")
 
+class WiFlightAPIFlightDetailsTestCase(unittest.TestCase):
+    def setUp(self):
+        self.client = server.MockClient()
+
+    def test_flight_track(self):
+        t = wiflight.APIFlight(67).track()
+        t.load(self.client)
+        first = iter(t).next()
+        self.assertEqual(first.t, 900)
+        self.assertEqual(first.agl, decimal.Decimal('4175.909'))
+        self.assertEqual(first.alt, decimal.Decimal('4306.879'))
+        self.assertEqual(first.az, decimal.Decimal('0.796614583333'))
+        self.assertEqual(first.gs, decimal.Decimal('82.105'))
+        self.assertEqual(first.head, decimal.Decimal('0.562261150079'))
+        self.assertEqual(first.lat, decimal.Decimal('50.8325239364'))
+        self.assertEqual(first.lon, decimal.Decimal('-3.1916370336'))
+        self.assertEqual(first.rpm, 3053)
+        self.assertEqual(first.vs, decimal.Decimal('3.742'))
+
+    def test_flight_track_url(self):
+        t = wiflight.APIFlight(67).track(offset=decimal.Decimal('1.1'))
+        self.assertEqual(t.url, 'a/flight/67/track?offset=1.1')
+        t = wiflight.APIFlight(67).track(
+            offset=decimal.Decimal('1.1'),
+            length=500
+        )
+        self.assertEqual(t.url, 'a/flight/67/track?offset=1.1&length=500')
+
 if __name__ == '__main__':
     unittest.main()

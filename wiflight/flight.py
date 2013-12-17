@@ -5,6 +5,7 @@ from wiflight.aircraft import WithAircraftMixIn
 import lxml.etree
 from copy import deepcopy
 import urllib
+import decimal
 
 class _FlightCrewSet(object):
     __slots__ = ('doc',)
@@ -75,6 +76,18 @@ class APIFlight(APIObject, WithAircraftMixIn):
         reservation that matches the flight.
         """
         return _FlightCrewSet(self.body)
+
+    def track(self, offset=0, length=None):
+        """Return an object for querying the time-series flight data
+
+        :param offset: Offset in seconds from start of flight
+        :param length: Length in seconds of list to download
+
+        The server limits the length to 10 minutes, so multiple
+        queries are almost always necessary to download a whole
+        flight.
+        """
+        return APIFlightTrack(self, offset, length)
 
     # events and weather not implemented yet!
 
@@ -180,3 +193,66 @@ class APIFlightSearch(APIListObject):
             APIObject.__init__(self, "a/flight/?" + urllib.urlencode(p))
         else:
             APIObject.__init__(self, "a/flight/")
+
+def APIFlightTrackPoint():
+    attributes = [
+        ('t', 'Timestamp in seconds since beginning of flight'),
+        ('agl', 'Distance between ground and aircraft in metres'),
+        ('alt', 'Distance between geoid and aircraft in metres'),
+        ('az', 'z-axis measured acceleration in g'),
+        ('gs', 'Ground speed in m/s'),
+        ('head', 'Track heading in radians'),
+        ('lat', 'Latitude in degrees'),
+        ('lon', 'Longitude in degrees'),
+        ('rpm', 'Detected engine RPM'),
+        ('vs', 'Vertical speed in m/s'),
+    ]
+    d = { '__slots__': () }
+    def _tuple_accessor(idx, doc):
+        return property(lambda self: self[idx], doc=doc)
+    for n, tpa in enumerate(attributes):
+        d[tpa[0]] = _tuple_accessor(n, tpa[1])
+    attributes = list(x[0] for x in attributes)
+    def from_xml(cls, xml):
+        def _get_decimal(name):
+            v = xml.get(name)
+            if v is None:
+                return None
+            else:
+                return decimal.Decimal(v)
+        return cls(_get_decimal(x) for x in attributes)
+    d['from_xml'] = classmethod(from_xml)
+    return type('APIFlightTrackPoint', (tuple,), d)
+APIFlightTrackPoint = APIFlightTrackPoint()
+
+class APIFlightTrack(APIListObject):
+    """Object for querying the time-series flight data
+
+    After loading, this object is a sequence of track points containing
+    GPS position, accelerometer information, etc...
+    """
+    __slots__ = ()
+    _toptag = 'flight'  # Poor choice, but that's what the server sends
+    _list_contents_map = { 'point': APIFlightTrackPoint }
+
+    def __init__(self, api_flight, offset=0, length=None):
+        """Initialize query for flight track data.
+
+        :param offset: Offset in seconds from start of flight
+        :param length: Length in seconds of list to download
+
+        The server limits the length to 10 minutes, so multiple
+        queries are almost always necessary to download a whole
+        flight.
+        """
+        if not isinstance(api_flight, APIFlight):
+            raise TypeError("APIFlightTrack only works on APIFlight")
+        p = []
+        if offset is not None and offset != 0:
+            p.append(('offset', str(offset)))
+        if length is not None:
+            p.append(('length', str(length)))
+        if p:
+            APIObject.__init__(self, api_flight.url + "track?" + urllib.urlencode(p))
+        else:
+            APIObject.__init__(self, api_flight.url + "track")

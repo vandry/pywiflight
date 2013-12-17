@@ -187,6 +187,23 @@ class MockClient(object):
                 # 1x1 white
                 '\x89PNG\r\n\x1a\n\0\0\0\rIHDR\0\0\0\1\0\0\0\1\1\0\0\0\x007n\xf9$\0\0\0\nIDAT\x08\x99ch\0\0\0\x82\0\x81\xcb\x13\xb2a\0\0\0\0IEND\xaeB`\x82'
             ),
+            'a/flight/67/track': (0, "text/xml",
+                """<?xml version="1.0" encoding="UTF-8"?>
+                <flight length="3600.0" start="20131201T000000Z">
+                    <point
+                        agl="4175.909"
+                        alt="4306.879"
+                        az="0.796614583333"
+                        gs="82.105"
+                        head="0.562261150079"
+                        lat="50.8325239364"
+                        lon="-3.1916370336"
+                        rpm="3053"
+                        t="900.0"
+                        vs="3.742"
+                    />
+                </flight>
+            """),
         }
 
     def request(self, url, method, data=None, content_type="text/xml", etag=AnyEtag):
