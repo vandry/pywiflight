@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from wiflight.object import APIObject
-from wiflight.aircraft import APIAircraft
+from wiflight.aircraft import WithAircraftMixIn
 import lxml.etree
 
 class _ResvCrewSet(object):
@@ -28,7 +28,7 @@ class _ResvCrewSet(object):
             if tag.get('name') == username:
                 tag.getparent().remove(tag)
 
-class APIReservation(APIObject):
+class APIReservation(APIObject, WithAircraftMixIn):
     """Represents a Wi-Flight reservation.
 
     Reservations are used to inform the system of which airplanes are
@@ -79,50 +79,6 @@ class APIReservation(APIObject):
     @domain.setter
     def domain(self, value):
         self.body.set('domain', value)
-
-    @property
-    def aircraft(self):
-        """Aircraft for which this reservation is being made
-
-        Must be a wiflight.APIAircraft object, referenced either by
-        numeric ID or tail number.
-        """
-        aclist = self.body.xpath("/reservation/aircraft")
-        if not aclist:
-            return None
-        ac = aclist[0]
-        aircraft_id = ac.get('id')
-        if aircraft_id is None:
-            tail = ac.get('tail')
-            if tail is None:
-                return None
-            else:
-                return APIAircraft(tail)
-        else:
-            try:
-                return APIAircraft(int(aircraft_id))
-            except (ValueError, TypeError), e:
-                return None
-
-    @aircraft.setter
-    def aircraft(self, value):
-        if not isinstance(value, APIAircraft):
-            raise ValueError("aircraft must be set to APIAircraft object")
-        aclist = self.body.xpath("/reservation/aircraft")
-        if aclist:
-            tag = aclist[0]
-            for x in aclist[1:]:
-                x.getparent().remove(x)
-        else:
-            toptag = self.body.xpath("/reservation")[0]
-            tag = lxml.etree.Element('aircraft')
-            toptag.append(tag)
-        tag.clear()
-        acurl = value.url.split('/')
-        if acurl[2] == 'tail':
-            tag.set('tail', str(acurl[3]))
-        else:
-            tag.set('id', str(acurl[2]))
 
     @property
     def crew(self):

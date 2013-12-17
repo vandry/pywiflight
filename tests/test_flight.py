@@ -43,10 +43,37 @@ class WiFlightAPIFlightTestCase(unittest.TestCase):
         flight = wiflight.APIFlight(3189)
         flight.load(self.client)
         self.assertEqual(flight.aircraft.url, 'a/aircraft/5/')
+        self.assertEqual(flight.aircraft.model, 'Cessna 172N')
         flight.aircraft = wiflight.APIAircraft(6)
         self.assertEqual(flight.aircraft.url, 'a/aircraft/6/')
         del flight.aircraft
         self.assertIsNone(flight.aircraft)
+
+    def test_flight_ac_tag_order(self):
+        """Make sure changing the aircraft leaves the XML at the same position"""
+        flight = wiflight.APIFlight(0)
+        flight.headline = "hhh"
+        flight.aircraft = wiflight.APIAircraft(0)
+        flight.engine_ontime = 1.0
+        self.assertEqual(
+            [ x.tag for x in flight.body ],
+            [ 'headline', 'aircraft', 'engine_ontime' ]
+        )
+        flight.aircraft = wiflight.APIAircraft(1)
+        self.assertEqual(
+            [ x.tag for x in flight.body ],
+            [ 'headline', 'aircraft', 'engine_ontime' ]
+        )
+        del flight.aircraft
+        self.assertEqual(
+            [ x.tag for x in flight.body ],
+            [ 'headline', 'engine_ontime' ]
+        )
+        flight.aircraft = wiflight.APIAircraft(2)
+        self.assertEqual(
+            [ x.tag for x in flight.body ],
+            [ 'headline', 'engine_ontime', 'aircraft' ]
+        )
 
     def test_flight_groups(self):
         flight = wiflight.APIFlight(3189)

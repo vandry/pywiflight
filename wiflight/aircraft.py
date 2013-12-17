@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from wiflight.object import APIObject
+from copy import deepcopy
 
 class APIAircraft(APIObject):
     """Represents a Wi-Flight aircraft."""
@@ -24,6 +25,31 @@ class APIAircraft(APIObject):
             APIObject.__init__(self, "a/aircraft/%d/" % (aircraft_id,))
             self.body.set('id', str(aircraft_id))
 
+    @classmethod
+    def from_xml(cls, xml):
+        """Return a new APIAircraft object pre-populated with content
+
+        :param xml: should be an etree <aircraft> tag with optional children.
+        It will be copied.
+
+        If the identification of the aircraft cannot be found from the
+        aircraft tag, None is returned.
+        """
+        aircraft_id = xml.get('id')
+        if aircraft_id is None:
+            tail = xml.get('tail')
+            if tail is None:
+                return None
+            else:
+                o = cls(tail)
+        else:
+            try:
+                o = cls(int(aircraft_id))
+            except (ValueError, TypeError), e:
+                return None
+        o.body = deepcopy(xml)
+        return o
+
 for k, v in {
     'tail': "Tail number (identification) of aircraft",
     'model': "Model name of aircraft",
@@ -38,3 +64,51 @@ for k, v in {
 APIAircraft._add_simple_bool_property(
     'pressurized', 'Flags indicating if aircraft is pressurized'
 )
+
+class WithAircraftMixIn(object):
+    """For objects that have an attached aircraft"""
+    __slots__ = ()
+
+    @property
+    def aircraft(self):
+        """Aircraft associated with this object, as an APIAircraft
+
+        On flights and reservations, the server will accept an <aircraft>
+        that is almost empty (only contains an ID or tail number to
+        identify the aircraft), so it it not necessary to load the aircraft
+        or otherwise populate its attributes (model, prop_blades, etc...).
+        Instead, code such as this example is enough:
+
+        reservation.aircraft = wiflight.APIAircraft("C-ABCD")
+        reservation.save(client)
+
+        When these objects are returned by the server, however, all of the
+        aircraft's attrributes will be filled in.
+        """
+        aclist = self.body.xpath("/" + self._toptag + "/aircraft")
+        if not aclist:
+            return None
+        ac = aclist[0]
+        return APIAircraft.from_xml(aclist[0])
+
+    @aircraft.setter
+    def aircraft(self, value):
+        if not isinstance(value, APIAircraft):
+            raise ValueError("aircraft must be set to APIAircraft object")
+        aclist = self.body.xpath("/" + self._toptag + "/aircraft")
+        if aclist:
+            tag = aclist[0]
+            toptag = tag.getparent()
+            position = toptag.index(tag)
+            for x in aclist:
+                x.getparent().remove(x)
+            toptag.insert(position, deepcopy(value.body))
+        else:
+            toptag = self.body.xpath("/" + self._toptag)[0]
+            toptag.append(deepcopy(value.body))
+
+    @aircraft.deleter
+    def aircraft(self):
+        aclist = self.body.xpath("/" + self._toptag + "/aircraft")
+        for x in aclist:
+            x.getparent().remove(x)

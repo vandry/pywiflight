@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from wiflight.object import APIObject
-from wiflight.aircraft import APIAircraft
+from wiflight.aircraft import WithAircraftMixIn
 import lxml.etree
 
 class _FlightCrewSet(object):
@@ -28,7 +28,7 @@ class _FlightCrewSet(object):
             if tag.get('name') == username:
                 tag.getparent().remove(tag)
 
-class APIFlight(APIObject):
+class APIFlight(APIObject, WithAircraftMixIn):
     """Represents a Wi-Flight flight.
 
     Flights cannot be created through the API. Only incoming data
@@ -44,49 +44,6 @@ class APIFlight(APIObject):
     def __init__(self, flight_id):
         APIObject.__init__(self, "a/flight/%d/" % (flight_id,))
         self.body.set('id', str(flight_id))
-
-    @property
-    def aircraft(self):
-        """Aircraft which flew this flight, as an APIAircraft object
-
-        Only superusers can change or remove the aircraft associated
-        with a flight
-        """
-        aclist = self.body.xpath("/flight/aircraft")
-        if not aclist:
-            return None
-        ac = aclist[0]
-        try:
-            aircraft_id = int(ac.get('id'))
-        except (ValueError, TypeError), e:
-            return None
-        return APIAircraft(aircraft_id)
-
-    @aircraft.setter
-    def aircraft(self, value):
-        if not isinstance(value, APIAircraft):
-            raise ValueError("aircraft must be set to APIAircraft object")
-        aclist = self.body.xpath("/flight/aircraft")
-        if aclist:
-            tag = aclist[0]
-            for x in aclist[1:]:
-                x.getparent().remove(x)
-        else:
-            toptag = self.body.xpath("/flight")[0]
-            tag = lxml.etree.Element('aircraft')
-            toptag.append(tag)
-        tag.clear()
-        acurl = value.url.split('/')
-        if acurl[2] == 'tail':
-            tag.set('tail', str(acurl[3]))
-        else:
-            tag.set('id', str(acurl[2]))
-
-    @aircraft.deleter
-    def aircraft(self):
-        aclist = self.body.xpath("/flight/aircraft")
-        for x in aclist:
-            x.getparent().remove(x)
 
     @property
     def crew(self):
