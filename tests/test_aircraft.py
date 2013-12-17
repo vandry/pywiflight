@@ -52,5 +52,20 @@ class WiFlightAPIAircraftTestCase(unittest.TestCase):
         ac.save(self.client)
         self.assertRegexpMatches(self.client.contents['a/aircraft/tail/C-ZZZZ'][2], _matchre)
 
+class WiFlightAPIAircraftSearchTestCase(unittest.TestCase):
+    def setUp(self):
+        self.client = server.MockClient()
+
+    def test_ac_search(self):
+        s = wiflight.APIAircraftSearch("filter words n&&d encoding")
+        self.assertEqual(s.url, 'a/aircraft/?search=filter+words+n%26%26d+encoding')
+        s.load(self.client)
+        self.assertEqual(len(s), 2)
+        it = iter(s)
+        first = it.next()
+        second = it.next()
+        self.assertEqual(first.url, 'a/aircraft/5/')
+        self.assertEqual(second.url, 'a/aircraft/6/')
+
 if __name__ == '__main__':
     unittest.main()

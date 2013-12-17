@@ -194,3 +194,21 @@ class APIObject(object):
             lambda self, value: self.__set_bool_attr(name, value),
             lambda self: self.__del_attr(name), doc=doc
         ))
+
+class APIListObject(APIObject):
+    __slots__ = ()
+
+    def __iter__(self):
+        for sub in self.body:
+            constructor = self._list_contents_map.get(sub.tag, None)
+            if constructor is None:
+                continue
+            yield constructor.from_xml(sub)
+
+    def __len__(self):
+        q = 0
+        for sub in self.body:
+            constructor = self._list_contents_map.get(sub.tag, None)
+            if constructor is not None:
+                q += 1
+        return q

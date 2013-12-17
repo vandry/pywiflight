@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
-from wiflight.object import APIObject
+from wiflight.object import APIObject, APIListObject
 from copy import deepcopy
+import urllib
 
 class APIAircraft(APIObject):
     """Represents a Wi-Flight aircraft."""
@@ -113,3 +114,34 @@ class WithAircraftMixIn(object):
         aclist = self.body.xpath("/" + self._toptag + "/aircraft")
         for x in aclist:
             x.getparent().remove(x)
+
+class APIAircraftSearch(APIListObject):
+    """Represents a Wi-Flight aircraft search.
+
+    Example:
+
+    # client is an authenticated session (see wiflight.APISession)
+    search = wiflight.APIAircraftSearch("C-FRUN")
+    search.load(client)
+    for aircraft in search:
+        pass
+
+    This type of object can only be loaded, not saved or deleted.
+    """
+    __slots__ = ()
+    _toptag = 'list'
+    _list_contents_map = { 'aircraft': APIAircraft }
+
+    def __init__(self, query):
+        """Search for aircraft by keyword on the server.
+
+        :param query: should be a keyword search string. It is
+        direcrlt interpreted by the server. If None, all aircraft
+        for which the client has permission will be returned.
+        """
+        if query is None:
+            APIObject.__init__(self, "a/aircraft/")
+        else:
+            APIObject.__init__(self, "a/aircraft/?" + urllib.urlencode({
+                'search': query
+            }))

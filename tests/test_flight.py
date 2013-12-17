@@ -116,5 +116,30 @@ class WiFlightAPIFlightTestCase(unittest.TestCase):
         flight.save(self.client)
         self.assertRegexpMatches(self.client.contents['a/flight/64/'][2], _matchre)
 
+class WiFlightAPIFlightSearchTestCase(unittest.TestCase):
+    def setUp(self):
+        self.client = server.MockClient()
+
+    def test_flight_search_cons(self):
+        s = wiflight.APIFlightSearch(
+            kw="123",
+            start=datetime.datetime(2013,12,1,14,0,0),
+            end=datetime.datetime(2013,12,1,15,0,0),
+            events="30..39,..",
+            group=['g1', 'g2'],
+            f=[1234,5678]
+        )
+        self.assertEqual(s.url, 'a/flight/?kw=123&start=20131201T140000Z&end=20131201T150000Z&group=g1&group=g2&f=1234&f=5678&events=30..39%2C..')
+        s = wiflight.APIFlightSearch()
+        self.assertEqual(s.url, 'a/flight/')
+        s = wiflight.APIFlightSearch(missingaircraft=True)
+        self.assertEqual(s.url, 'a/flight/?missingaircraft=1')
+
+    def test_flight_search(self):
+        s = wiflight.APIFlightSearch(kw="123")
+        s.load(self.client)
+        self.assertEqual(len(s), 2)
+        self.assertEqual(iter(s).next().headline, "1")
+
 if __name__ == '__main__':
     unittest.main()
