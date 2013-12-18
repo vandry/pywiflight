@@ -40,6 +40,7 @@ class WiFlightAPICrewDbTestCase(unittest.TestCase):
                 self.assertEqual(
                     item.temporary_username_domain, 'fleet1-domain.example.com'
                 )
+                self.assertEqual(item.name, 'fleet1')
                 # This property is supposed to get removed by
                 # canonicalization
                 self.assertIsNone(item.body.get('dbdomain'))

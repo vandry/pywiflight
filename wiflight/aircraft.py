@@ -52,6 +52,11 @@ class APIAircraft(APIObject):
         return o
 
     @property
+    def id(self):
+        """The aircraft's integer identifier"""
+        return int(self.body.get('id'))
+
+    @property
     def image(self):
         """Image (PNG, JPEG, etc...) for this aircraft"""
         return APIAircraftImage(self)

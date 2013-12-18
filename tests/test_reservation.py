@@ -17,7 +17,9 @@ class WiFlightAPIReservationTestCase(unittest.TestCase):
 
     def test_reservation_attr(self):
         resv = wiflight.APIReservation('resv1')
+        self.assertEqual(resv.name, 'resv1')
         resv.load(self.client)
+        self.assertEqual(resv.name, 'resv1')
         self.assertEqual(resv.start, datetime.datetime(2013,12,1,12,0,0))
         self.assertEqual(resv.end, datetime.datetime(2013,12,1,13,0,0))
         self.assertEqual(resv.notify_profile, "placeholder")

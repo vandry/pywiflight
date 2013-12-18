@@ -19,6 +19,7 @@ class WiFlightAPIAircraftTestCase(unittest.TestCase):
     def test_aircraft_attr(self):
         ac = wiflight.APIAircraft(5)
         ac.load(self.client)
+        self.assertEqual(ac.id, 5)
         self.assertEqual(ac.model, 'Cessna 172N')
         self.assertEqual(ac.cockpit_height, decimal.Decimal('1.5'))
         self.assertEqual(ac.prop_blades, 2)

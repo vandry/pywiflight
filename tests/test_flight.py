@@ -22,6 +22,7 @@ class WiFlightAPIFlightTestCase(unittest.TestCase):
     def test_flight_attr(self):
         flight = wiflight.APIFlight(3189)
         flight.load(self.client)
+        self.assertEqual(flight.id, 3189)
         self.assertEqual(flight.length, decimal.Decimal('7205.25'))
         self.assertEqual(flight.master_ontime, decimal.Decimal('7204.0'))
         self.assertEqual(flight.engine_ontime, decimal.Decimal('7139.5'))

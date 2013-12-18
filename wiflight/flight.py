@@ -67,6 +67,11 @@ class APIFlight(APIObject, WithAircraftMixIn):
         return o
 
     @property
+    def id(self):
+        """The flight's integer identifier"""
+        return int(self.body.get('id'))
+
+    @property
     def crew(self):
         """Set of usernames of crew members who were on this flight
 

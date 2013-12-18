@@ -123,6 +123,11 @@ class APIFleet(APIObject):
             o.temporary_username_domain = dbdomain
         return o
 
+    @property
+    def name(self):
+        """Name (primary key) of this fleet"""
+        return self.body.get('name')
+
 APIFleet._add_simple_text_property('description', "Fleet display name")
 APIFleet._add_simple_text_property(
     'temporary_username_domain', """

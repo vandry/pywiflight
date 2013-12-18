@@ -58,6 +58,12 @@ class APIReservation(APIObject, WithAircraftMixIn):
 
     def __init__(self, reservation_name):
         APIObject.__init__(self, 'a', 'reservation', reservation_name)
+        self.body.set('name', reservation_name)
+
+    @property
+    def name(self):
+        """Name of this reservation. Each reservation must have a unique name."""
+        return self.body.get('name')
 
     @property
     def domain(self):
