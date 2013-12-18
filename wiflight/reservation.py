@@ -13,12 +13,20 @@ class _ResvCrewSet(object):
     def __iter__(self):
         return iter(self.doc.xpath("/reservation/crew/user/@name"))
 
+    def __len__(self):
+        return len(self.doc.xpath("/reservation/crew/user"))
+
     def __repr__(self):
         return repr(set(self))
 
     def add(self, username):
         if username not in self:
-            toptag = self.doc.xpath("/reservation/crew")[0]
+            toptag = self.doc.xpath("/reservation/crew")
+            if toptag:
+                toptag = toptag[0]
+            else:
+                toptag = lxml.etree.Element('crew')
+                self.doc.append(toptag)
             tag = lxml.etree.Element('user')
             tag.set('name', username)
             toptag.append(tag)

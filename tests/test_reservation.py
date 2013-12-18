@@ -40,5 +40,13 @@ class WiFlightAPIReservationTestCase(unittest.TestCase):
         resv.aircraft = wiflight.APIAircraft(6)
         self.assertEqual(resv.aircraft.url, 'a/aircraft/6')
 
+    def test_add_crew_to_new(self):
+        resv = wiflight.APIReservation('placeholder')
+        self.assertEqual(len(resv.crew), 0)
+        self.assertItemsEqual(resv.crew, [])
+        resv.crew.add('another placeholder')
+        self.assertItemsEqual(resv.crew, ['another placeholder'])
+        self.assertEqual(len(resv.crew), 1)
+
 if __name__ == '__main__':
     unittest.main()
