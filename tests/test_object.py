@@ -2,6 +2,7 @@
 
 import unittest
 import wiflight
+import lxml.etree
 
 import server
 
@@ -73,6 +74,23 @@ class WiFlightAPIObjectTestCase(unittest.TestCase):
     def test_special_characters(self):
         o = wiflight.APIObject('test', u'foo\xe9/\tdone')
         o.load(self.client)
+
+    def test_get_utf8(self):
+        o = wiflight.APIObject('test', u'foo7')
+        o.load(self.client)
+        self.assertEqual(o.body.tag, 'test')
+        self.assertEqual(o.body.text, u'\xe9')
+
+    def test_get_ascii_bad_document(self):
+        o = wiflight.APIObject('test', u'foo8')
+        with self.assertRaises(lxml.etree.XMLSyntaxError) as cm:
+            o.load(self.client)
+
+    def test_get_iso_8859_1(self):
+        o = wiflight.APIObject('test', u'foo9')
+        o.load(self.client)
+        self.assertEqual(o.body.tag, 'test')
+        self.assertEqual(o.body.text, u'\xe9')
 
 if __name__ == '__main__':
     unittest.main()

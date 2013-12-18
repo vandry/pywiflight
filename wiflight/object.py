@@ -87,7 +87,20 @@ class APIObject(object):
         """
         content_type, etag, body = client.request(self.url, "GET")
         self.etag = etag
+        ct_parts = content_type.split(';')
+        content_type = ct_parts[0].strip()
         self.content_type = content_type
+        # lxml.etree.fromstring does not take a charset argument
+        # and the documentation discourages the user from decoding
+        # the bytes before passing them to this function.
+        # Accordingly, we unfortunately ignore whatever charset is
+        # specified in the HTTP header and hope that fromstring does
+        # the right thing. That should work if the document has a
+        # <?xml> declaration with a charset that matches the header
+        # charset, which it should. Anyway, in practice everything
+        # should be either ASCII or UTF-8 anyway, and anything
+        # coming from the Wi-Flight server is always UTF-8 and has
+        # a declaration. So we should definitely be OK.
         if content_type == 'text/xml':
             self.body = lxml.etree.fromstring(body)
         else:

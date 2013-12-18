@@ -246,6 +246,18 @@ class MockClient(object):
                 </list>
             """),
             'test/foo%C3%A9%2F%09done': (0, "text/plain", "exists"),
+            'test/foo7': (0, "text/xml; charset=utf-8",
+                """<?xml version="1.0" encoding="UTF-8"?>
+                <test>\xc3\xa9</test>
+            """),
+            'test/foo8': (0, "text/xml; charset=ascii",
+                """<?xml version="1.0" encoding="ASCII"?>
+                <test>\xc3\xa9</test>
+            """),
+            'test/foo9': (0, "text/xml; charset=iso-8859-1",
+                """<?xml version="1.0" encoding="ISO-8859-1"?>
+                <test>\xe9</test>
+            """),
         }
 
     def request(self, url, method, data=None, content_type="text/xml", etag=AnyEtag):
