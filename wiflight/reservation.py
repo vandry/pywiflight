@@ -57,7 +57,7 @@ class APIReservation(APIObject, WithAircraftMixIn):
     _toptag = 'reservation'
 
     def __init__(self, reservation_name):
-        APIObject.__init__(self, "a/reservation/%s" % (reservation_name,))
+        APIObject.__init__(self, 'a', 'reservation', reservation_name)
 
     @property
     def domain(self):

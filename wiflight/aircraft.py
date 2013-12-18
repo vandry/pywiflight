@@ -21,9 +21,9 @@ class APIAircraft(APIObject):
         numeric ID.
         """
         if isinstance(aircraft_id, basestring):
-            APIObject.__init__(self, "a/aircraft/tail/%s" % (aircraft_id,))
+            APIObject.__init__(self, 'a', 'aircraft', 'tail', aircraft_id)
         else:
-            APIObject.__init__(self, "a/aircraft/%d" % (aircraft_id,))
+            APIObject.__init__(self, 'a', 'aircraft', str(aircraft_id))
             self.body.set('id', str(aircraft_id))
 
     @classmethod
@@ -145,9 +145,9 @@ class APIAircraftSearch(APIListObject):
         for which the client has permission will be returned.
         """
         if query is None:
-            APIObject.__init__(self, "a/aircraft/")
+            APIObject.__init__(self, 'a', 'aircraft', '')
         else:
-            APIObject.__init__(self, "a/aircraft/?" + urllib.urlencode({
+            APIObject.__init__(self, 'a', 'aircraft', '', query_string=urllib.urlencode({
                 'search': query
             }))
 
@@ -169,4 +169,5 @@ class APIAircraftImage(APIObject):
         """Produce aircraft image given aircraft instance"""
         if not isinstance(api_aircraft, APIAircraft):
             raise TypeError("APIAircraftImage only works on APIAircraft")
-        APIObject.__init__(self, api_aircraft.url + "/image")
+        urlparts = list(api_aircraft.urlparts) + ['image']
+        APIObject.__init__(self, *urlparts)

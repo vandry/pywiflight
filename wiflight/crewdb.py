@@ -41,7 +41,7 @@ class APICrewDbEntry(APIObject):
         # username comes first. This is done to make it consistent
         # with the URL a/crewdb/username (no fleet) that searches
         # for a given username in any fleet
-        APIObject.__init__(self, "a/crewdb/%s/%s" % (username, fleetname))
+        APIObject.__init__(self, 'a', 'crewdb', username, fleetname)
         self.username = username
         self.fleet = fleetname
 
@@ -96,7 +96,7 @@ class APIFleet(APIObject):
     _toptag = 'fleet'
 
     def __init__(self, fleetname):
-        APIObject.__init__(self, "a/fleet/%s" % (fleetname,))
+        APIObject.__init__(self, 'a', 'fleet', fleetname)
         self.body.set('name', fleetname)
 
     @classmethod
@@ -160,7 +160,7 @@ class APICrewDbSearch(APIListObject):
         :param query: should be a keyword search string. It is
         directly interpreted by the server. It is required.
         """
-        APIObject.__init__(self, "a/crewdb?" + urllib.urlencode({
+        APIObject.__init__(self, 'a', 'crewdb', query_string=urllib.urlencode({
             'q': query
         }))
 
@@ -175,4 +175,4 @@ class APICrewDbAnyFleet(APIListObject):
     def __init__(self, username):
         """Search for CrewDb entries by username on the server.
         """
-        APIObject.__init__(self, "a/crewdb/" + username)
+        APIObject.__init__(self, 'a', 'crewdb', username)

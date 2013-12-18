@@ -45,7 +45,7 @@ class APIFlight(APIObject, WithAircraftMixIn):
     _toptag = 'flight'
 
     def __init__(self, flight_id):
-        APIObject.__init__(self, "a/flight/%d/" % (flight_id,))
+        APIObject.__init__(self, 'a', 'flight', str(flight_id), '')
         self.body.set('id', str(flight_id))
 
     @classmethod
@@ -190,9 +190,9 @@ class APIFlightSearch(APIListObject):
         elif events is not False and events is not None:
             p.append(('events', events))
         if p:
-            APIObject.__init__(self, "a/flight/?" + urllib.urlencode(p))
+            APIObject.__init__(self, 'a', 'flight', '', query_string=urllib.urlencode(p))
         else:
-            APIObject.__init__(self, "a/flight/")
+            APIObject.__init__(self, 'a', 'flight', '')
 
 def APIFlightTrackPoint():
     attributes = [
@@ -252,7 +252,10 @@ class APIFlightTrack(APIListObject):
             p.append(('offset', str(offset)))
         if length is not None:
             p.append(('length', str(length)))
+        urlparts = list(api_flight.urlparts)
+        # Replace the last component which should be the empty string
+        urlparts[-1] = 'track'
         if p:
-            APIObject.__init__(self, api_flight.url + "track?" + urllib.urlencode(p))
+            APIObject.__init__(self, *urlparts, query_string=urllib.urlencode(p))
         else:
-            APIObject.__init__(self, api_flight.url + "track")
+            APIObject.__init__(self, *urlparts)

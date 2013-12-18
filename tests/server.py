@@ -204,7 +204,7 @@ class MockClient(object):
                     />
                 </flight>
             """),
-            'a/crewdb/user@example.com/fleet1': (0, "text/xml",
+            'a/crewdb/user%40example.com/fleet1': (0, "text/xml",
                 """<?xml version="1.0" encoding="UTF-8"?>
                 <user>
                     <username>user@example.com</username>
@@ -231,7 +231,7 @@ class MockClient(object):
                     <fleet dbdomain="fleet1-domain.example.com" name="fleet1"/>
                 </crewdb_search>
             """),
-            'a/crewdb/user@example.com': (0, "text/xml",
+            'a/crewdb/user%40example.com': (0, "text/xml",
                 """<?xml version="1.0" encoding="UTF-8"?>
                 <list>
                     <user>
@@ -245,6 +245,7 @@ class MockClient(object):
                     </user>
                 </list>
             """),
+            'test/foo%C3%A9%2F%09done': (0, "text/plain", "exists"),
         }
 
     def request(self, url, method, data=None, content_type="text/xml", etag=AnyEtag):

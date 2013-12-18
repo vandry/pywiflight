@@ -3,6 +3,7 @@
 import lxml.etree
 import datetime
 import decimal
+import urllib
 
 def _decode_iso8601(d):
     return datetime.datetime.strptime(d, "%Y%m%dT%H%M%SZ")
@@ -46,9 +47,30 @@ class APIObject(object):
     should be set and then the object saved to the server using the
     save method.
     """
-    __slots__ = ('url', 'etag', 'body', 'content_type')
+    __slots__ = ('url', 'urlparts', 'query_string', 'etag', 'body', 'content_type')
 
-    def __init__(self, url):
+    def __init__(self, *urlparts, **kwargs):
+        """Construct a generic empty object with a given URL
+
+        :param *urlparts: are the components of the url
+        :param query_string: is the optional query string
+
+        None that the signature of this function should have been
+        def __init__(self, *urlparts, query_string=None)
+        but Python 2 does not accept that
+        """
+        self.urlparts = urlparts
+        url = '/'.join(urllib.quote(x.encode('utf-8'), safe='') for x in urlparts)
+        if 'query_string' in kwargs:
+            query_string = kwargs['query_string']
+            url += '?' + query_string
+            maxlen = 1
+        else:
+            query_string = None
+            maxlen = 0
+        if len(kwargs) > maxlen:
+            raise TypeError("Only 'query_string' is a valid keyword argument")
+        self.query_string = query_string
         self.url = url
         self.etag = None
         if hasattr(self, '_toptag'):
