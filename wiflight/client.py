@@ -70,8 +70,8 @@ class APISession(object):
             body = StringIO.StringIO(data)
             req.setopt(pycurl.READFUNCTION, body.read)
             req.setopt(pycurl.INFILESIZE, len(data))
-            out_header.append('Content-Length: %d' % (len(data),))
             if method == "POST":
+                out_header.append('Content-Length: %d' % (len(data),))
                 req.setopt(pycurl.POST, 1)
             else:
                 req.setopt(pycurl.UPLOAD, 1)
