@@ -44,7 +44,7 @@ class WiFlightAPIAircraftTestCase(unittest.TestCase):
         self.assertEqual(ac.model, u'\u30bb\u30b9\u30ca')
 
     def test_aircraft_new(self, _matchre=re.compile(
-        r'.*<aircraft>.*<model>Brand new</model>.*</aircraft>', re.DOTALL
+        r'.*<aircraft tail="C-ZZZZ">.*<model>Brand new</model>.*</aircraft>', re.DOTALL
     )):
         ac = wiflight.APIAircraft('C-ZZZZ')
         ac.tail = 'C-ZZZZ'

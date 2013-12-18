@@ -22,6 +22,7 @@ class APIAircraft(APIObject):
         """
         if isinstance(aircraft_id, basestring):
             APIObject.__init__(self, 'a', 'aircraft', 'tail', aircraft_id)
+            self.body.set('tail', aircraft_id)
         else:
             APIObject.__init__(self, 'a', 'aircraft', str(aircraft_id))
             self.body.set('id', str(aircraft_id))
