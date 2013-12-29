@@ -82,7 +82,7 @@ class APISession(object):
             if etag is None:
                 out_header.append('If-None-Match: *')
             else:
-                out_header.append('If-Match: %d' % (etag,))
+                out_header.append('If-Match: %s' % (etag,))
         req.setopt(pycurl.HTTPHEADER, out_header)
         req.setopt(pycurl.SSL_VERIFYPEER, 1)
         self.extra_setup()
