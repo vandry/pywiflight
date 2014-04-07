@@ -67,6 +67,7 @@ class APIReservation(APIObject, WithAircraftMixIn):
     def __init__(self, reservation_name):
         APIObject.__init__(self, 'a', 'reservation', reservation_name)
         self.body.set('name', reservation_name)
+        self.body.append(lxml.etree.Element('crew'))
 
     @property
     def name(self):
