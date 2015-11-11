@@ -78,6 +78,7 @@ for k, v in {
         use this field to know what suffix in can use for the names of newly
         created reservations and auto-created users.""",
     'fleet': "Name of fleet this CrewDbEntry belongs to (part of the key)",
+    'useruuid': "UUID of Wi-Flight user",
 }.iteritems():
     APICrewDbEntry._add_simple_text_property(k, v)
 del k, v

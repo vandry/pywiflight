@@ -4,14 +4,11 @@ from wiflight.object import APIObject
 from wiflight.aircraft import WithAircraftMixIn
 import lxml.etree
 
-class _ResvCrewSet(object):
+class _ResvCrewSetBase(object):
     __slots__ = ('doc',)
 
     def __init__(self, doc):
         self.doc = doc
-
-    def __iter__(self):
-        return iter(self.doc.xpath("/reservation/crew/user/@name"))
 
     def __len__(self):
         return len(self.doc.xpath("/reservation/crew/user"))
@@ -28,13 +25,25 @@ class _ResvCrewSet(object):
                 toptag = lxml.etree.Element('crew')
                 self.doc.append(toptag)
             tag = lxml.etree.Element('user')
-            tag.set('name', username)
+            tag.set(self._attrname, username)
             toptag.append(tag)
 
     def remove(self, username):
         for tag in self.doc.xpath("/reservation/crew/user"):
-            if tag.get('name') == username:
+            if tag.get(self._attrname) == username:
                 tag.getparent().remove(tag)
+
+class _ResvCrewByNameSet(_ResvCrewSetBase):
+    _attrname = 'name'
+
+    def __iter__(self):
+        return iter(self.doc.xpath("/reservation/crew/user/@name"))
+
+class _ResvCrewByUUIDSet(_ResvCrewSetBase):
+    _attrname = 'uuid'
+
+    def __iter__(self):
+        return iter(self.doc.xpath("/reservation/crew/user/@uuid"))
 
 class APIReservation(APIObject, WithAircraftMixIn):
     """Represents a Wi-Flight reservation.
@@ -98,7 +107,12 @@ class APIReservation(APIObject, WithAircraftMixIn):
     @property
     def crew(self):
         """Set of usernames of crew members associated with this reservation"""
-        return _ResvCrewSet(self.body)
+        return _ResvCrewByNameSet(self.body)
+
+    @property
+    def crew_by_uuid(self):
+        """Set of UUIDs of crew members associated with this reservation"""
+        return _ResvCrewByUUIDSet(self.body)
 
 APIReservation._add_simple_date_property('start', 'Start bound of reservation in UTC')
 APIReservation._add_simple_date_property('end', 'End bound of reservation in UTC')

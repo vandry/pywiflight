@@ -20,7 +20,14 @@ class WiFlightAPICrewDbTestCase(unittest.TestCase):
         self.assertEqual(u.phone, '+1 514 907-0802')
         self.assertEqual(u.dbdomain, 'fleet1-domain.example.com')
         self.assertEqual(u.fleet, fleetname)
+        self.assertEqual(u.useruuid, 'uuid1')
         self.assertTrue(u.signup_done)
+
+    def test_missing_uuid(self):
+        """CrewDb entries prior to existence of UUID have none"""
+        u = wiflight.APICrewDbEntry('fleet1', 'older@example.com')
+        u.load(self.client)
+        self.assertIsNone(u.useruuid)
 
     def test_empty_crewdb(self):
         fleetname = 'yar'

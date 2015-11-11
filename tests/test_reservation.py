@@ -33,6 +33,15 @@ class WiFlightAPIReservationTestCase(unittest.TestCase):
         resv.crew.remove('crew1')
         self.assertItemsEqual(resv.crew, ['crew2', 'crew3'])
 
+    def test_reservation_crew_by_uuid(self):
+        resv = wiflight.APIReservation('resv1')
+        resv.load(self.client)
+        self.assertItemsEqual(resv.crew_by_uuid, ['uuid1', 'uuid2'])
+        resv.crew_by_uuid.add('uuid3')
+        self.assertItemsEqual(resv.crew_by_uuid, ['uuid1', 'uuid2', 'uuid3'])
+        resv.crew_by_uuid.remove('uuid1')
+        self.assertItemsEqual(resv.crew_by_uuid, ['uuid2', 'uuid3'])
+
     def test_reservation_aircraft(self):
         resv = wiflight.APIReservation('resv1')
         resv.load(self.client)

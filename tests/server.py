@@ -148,8 +148,8 @@ class MockClient(object):
                     <end>20131201T130000Z</end>
                     <notify_profile>placeholder</notify_profile>
                     <crew>
-                        <user name="crew1"/>
-                        <user name="crew2"/>
+                        <user name="crew1" uuid="uuid1"/>
+                        <user name="crew2" uuid="uuid2"/>
                     </crew>
                 </reservation>
             """),
@@ -209,6 +209,19 @@ class MockClient(object):
                 <user>
                     <username>user@example.com</username>
                     <email>user@example.com</email>
+                    <name>Kim Vandry</name>
+                    <phone>+1 514 907-0802</phone>
+                    <dbdomain>fleet1-domain.example.com</dbdomain>
+                    <fleet>fleet1</fleet>
+                    <useruuid>uuid1</useruuid>
+                    <signup_done/>
+                </user>
+            """),
+            'a/crewdb/older%40example.com/fleet1': (0, "text/xml",
+                """<?xml version="1.0" encoding="UTF-8"?>
+                <user>
+                    <username>older@example.com</username>
+                    <email>older@example.com</email>
                     <name>Kim Vandry</name>
                     <phone>+1 514 907-0802</phone>
                     <dbdomain>fleet1-domain.example.com</dbdomain>
